@@ -1,0 +1,105 @@
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/auth/AuthState';
+
+const Register = () => {
+  const authContext = useContext(AuthContext);
+  const { register, error, clearErrors, isAuthenticated } = authContext;
+
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    password: '',
+    password2: ''
+  });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+
+    if (error) {
+      alert(error);
+      clearErrors();
+    }
+    // eslint-disable-next-line
+  }, [error, isAuthenticated, navigate]);
+
+  const { username, email, password, password2 } = user;
+
+  const onChange = e => setUser({ ...user, [e.target.name]: e.target.value });
+
+  const onSubmit = e => {
+    e.preventDefault();
+    if (password !== password2) {
+      alert('Passwords do not match');
+    } else if (username === '' || email === '' || password === '') {
+      alert('Please fill in all fields');
+    } else {
+      register({
+        username,
+        email,
+        password
+      });
+    }
+  };
+
+  return (
+    <div className="form-container">
+      <h1>
+        Account <span className="text-primary">Register</span>
+      </h1>
+      <form onSubmit={onSubmit}>
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={username}
+            onChange={onChange}
+            required
+            className="form-control"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={onChange}
+            required
+            className="form-control"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={onChange}
+            required
+            className="form-control"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password2">Confirm Password</label>
+          <input
+            type="password"
+            name="password2"
+            value={password2}
+            onChange={onChange}
+            required
+            className="form-control"
+          />
+        </div>
+        <input type="submit" value="Register" className="btn btn-primary btn-block" />
+      </form>
+    </div>
+  );
+};
+
+export default Register;
